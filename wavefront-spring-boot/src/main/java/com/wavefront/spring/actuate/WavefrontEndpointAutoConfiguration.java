@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
  *
  * @author Stephane Nicoll
  */
+@Configuration(proxyBeanMethods = false)
 @ConditionalOnClass({ RestTemplate.class, WavefrontConfig.class, ApplicationTags.class })
 @ConditionalOnBean({ RestTemplateBuilder.class, WavefrontConfig.class, ApplicationTags.class })
 @ConditionalOnAvailableEndpoint(endpoint = WavefrontController.class)
@@ -41,7 +43,7 @@ public class WavefrontEndpointAutoConfiguration {
   WavefrontController wavefrontController(WavefrontProperties properties,
       AccountManagementClient accountManagementClient, WavefrontConfig wavefrontConfig,
       ApplicationTags applicationTags) {
-    if (properties.isFreemiumAccount()) {
+    if (Boolean.TRUE.equals(properties.getFreemiumAccount())) {
       return new WavefrontController(new OneTimeDashboardUrlSupplier(
           accountManagementClient, wavefrontConfig, applicationTags));
     }

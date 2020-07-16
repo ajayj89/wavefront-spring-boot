@@ -9,16 +9,16 @@ This project provides a Spring Boot starter for Wavefront. Add the starter to a 
 * [Custom Configuration](#custom-configuration)
 * [Documentation](#documentation)
 * [License](#license)
-* [How to Contribute](#how-to-contribute)
+* [Getting Support](#getting-support)
 
 ## Prerequisites
 
 * Spring Boot 2.3 or above
 * Java 8 or above
 * Maven 3.3+ or Gradle 6.3 or later\
-  See [System Requirements](https://docs.spring.io/spring-boot/docs/2.3.0.RC1/reference/html/getting-started.html#getting-started-system-requirements) in the Spring Boot documentation. 
+  See [System Requirements](https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/getting-started.html#getting-started-system-requirements) in the Spring Boot documentation.
 
-> Note: This starter reuses the [existing Wavefront support](https://docs.spring.io/spring-boot/docs/2.3.0.RC1/reference/html/production-ready-features.html#production-ready-metrics-export-wavefront)
+> Note: This starter reuses the [existing Wavefront support](https://docs.spring.io/spring-boot/docs/2.3.0.RELEASE/reference/html/production-ready-features.html#production-ready-metrics-export-wavefront)
 in Spring Boot and provides the Actuator (i.e., `spring-boot-starter-actuator`).
 
 ## Getting Started
@@ -50,7 +50,7 @@ project first. Invoke the following command in the root directory:
     ```
     dependencies {
       ...
-      implementation 'com.wavefront:wavefront-spring-boot-starter:2.0.0-SNAPSHOT'
+      implementation 'com.wavefront:wavefront-spring-boot-starter:2.0.0-RC1'
       
     }
     ```
@@ -112,7 +112,7 @@ project first. Invoke the following command in the root directory:
     ```
     dependencies {
       ...
-      implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:2.2.2.RELEASE'
+      implementation 'org.springframework.cloud:spring-cloud-starter-sleuth:2.2.3.RELEASE'
 
     }
     ```
@@ -145,7 +145,7 @@ project first. Invoke the following command in the root directory:
 
 [Open Source License](open_source_licenses.txt)
 
-## How to Contribute
+## Getting Support
 
 * Reach out to us on [Slack](https://www.wavefront.com/slack-us) and join the #springboot public channel.
 * If you run into any issues, let us know by creating a GitHub issue.

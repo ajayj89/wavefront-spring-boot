@@ -42,6 +42,8 @@ import org.springframework.util.StringUtils;
 class AccountManagementEnvironmentPostProcessor
     implements EnvironmentPostProcessor, ApplicationListener<SpringApplicationEvent> {
 
+  private static final String ENABLED_PROPERTY = "management.metrics.export.wavefront.enabled";
+
   private static final String API_TOKEN_PROPERTY = "management.metrics.export.wavefront.api-token";
 
   private static final String URI_PROPERTY = "management.metrics.export.wavefront.uri";
@@ -56,8 +58,7 @@ class AccountManagementEnvironmentPostProcessor
 
   @Override
   public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-    if (environment.getPropertySources().contains("bootstrap")) {
-      // Do not run in the bootstrap phase as the user configuration is not available yet
+    if (!shouldRun(environment)) {
       return;
     }
     application.addListeners(this);
@@ -75,6 +76,21 @@ class AccountManagementEnvironmentPostProcessor
     else {
       this.accountConfigurationOutcome = configureNewAccount(environment, clusterUri, localApiTokenResource);
     }
+  }
+
+  private boolean shouldRun(ConfigurableEnvironment environment) {
+    if (environment.getPropertySources().contains("bootstrap")) {
+      // Do not run in the bootstrap phase as the user configuration is not available yet
+      return false;
+    }
+    Boolean freemiumAccount = environment.getProperty(FREEMIUM_ACCOUNT_PROPERTY, Boolean.class);
+    if (freemiumAccount != null) {
+      return freemiumAccount;
+    }
+    if (!shouldEnableAccountManagement(Thread.currentThread())) {
+      return false;
+    }
+    return environment.getProperty(ENABLED_PROPERTY, Boolean.class, true);
   }
 
   @Override
@@ -218,6 +234,10 @@ class AccountManagementEnvironmentPostProcessor
     }
     MapPropertySource wavefrontPropertySource = new MapPropertySource("wavefront", wavefrontSettings);
     environment.getPropertySources().addLast(wavefrontPropertySource);
+  }
+
+  protected boolean shouldEnableAccountManagement(Thread thread) {
+    return AccountManagementEnablementDeducer.shouldEnable(thread);
   }
 
   protected Resource getLocalApiTokenResource() {

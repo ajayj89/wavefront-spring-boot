@@ -5,7 +5,6 @@ import com.wavefront.sdk.common.WavefrontSender;
 import com.wavefront.sdk.common.application.ApplicationTags;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.wavefront.WavefrontConfig;
-import org.aspectj.weaver.tools.PointcutPrimitive;
 
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -14,10 +13,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.cloud.sleuth.LocalServiceName;
 import org.springframework.cloud.sleuth.SpanNamer;
 import org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration;
-import org.springframework.cloud.sleuth.sampler.SamplerAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 /**
  * Configuration for Wavefront tracing using Spring Cloud Sleuth.
@@ -26,19 +23,11 @@ import org.springframework.context.annotation.Import;
  * @author Stephane Nicoll
  */
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnClass({ SpanNamer.class, TracingCustomizer.class, PointcutPrimitive.class })
+@ConditionalOnClass({ SpanNamer.class, TracingCustomizer.class })
 @AutoConfigureBefore(TraceAutoConfiguration.class)
-// This import is required and can be removed in a future release of Spring Cloud Sleuth
-@Import(SamplerAutoConfiguration.class)
 class WavefrontTracingSleuthConfiguration {
 
   static final String BEAN_NAME = "wavefrontTracingCustomizer";
-
-  /**
-   * Wavefront use a combination of null and non-values in defaults. Some non-values are not defined
-   * by constants. This constant helps reduce drift in non-value comparison.
-   */
-  private static final String DEFAULT_SERVICE = new WavefrontProperties().getApplication().getService();
 
   @Bean(BEAN_NAME)
   @ConditionalOnMissingBean(name = BEAN_NAME)
@@ -60,7 +49,7 @@ class WavefrontTracingSleuthConfiguration {
         localServiceName
     );
 
-    return t -> t.traceId128Bit(true).supportsJoin(false).addFinishedSpanHandler(spanHandler);
+    return t -> t.traceId128Bit(true).supportsJoin(false).addSpanHandler(spanHandler);
   }
 
 }
